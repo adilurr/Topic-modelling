@@ -286,9 +286,11 @@ def predict_topics(req: TopicRequest):
             model = NMF(
                 n_components=req.num_topics,
                 random_state=42,
-                init="nndsvda",
+                init="random",
                 max_iter=500
             )
+            # NMF can fail with sparse matrices on some numpy builds; use dense
+            matrix = np.ascontiguousarray(matrix.toarray())
         else:
             vectorizer = CountVectorizer(
                 stop_words="english",
